@@ -1,5 +1,5 @@
 {
-	"name": "prism-live",
+	"name": "@victr/prism-live",
 	"version": "0.0.1",
 	"description": "Editable code areas powered by Prism.",
 	"author": "Lea Verou (http://lea.verou.me)",
@@ -11,13 +11,23 @@
 		"syntax",
 		"highlight"
 	],
-	"main": "src/prism-live.js",
+	"files": [
+		"./dist"
+	],
+	"exports": {
+		".": "./dist/prism-live.js",
+		"./prism-live.css": "./dist/prism-live.css"
+	},
 	"scripts": {
-		"test": ""
+		"test": "",
+		"build": "esbuild ./src/prism-live.js --outdir=./dist --bundle --minify --format=esm"
 	},
 	"dependencies": {
 		"blissfuljs": "^1.0.6",
 		"prismjs": "^1.29.0"
+	},
+	"devDependencies": {
+		"esbuild": "^0.20.1"
 	},
 	"prettier": {
 		"tabWidth": 4,
