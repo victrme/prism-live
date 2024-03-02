@@ -1,7 +1,4 @@
-import "blissfuljs";
-import "prismjs";
-
-import "../node_modules/prismjs/themes/prism.css";
+import "../../node_modules/prismjs/themes/prism.css";
 import "../../src/prism-live.js";
 
 const html = `<html lang="en">
@@ -58,16 +55,16 @@ return ret;`;
 
 //
 
-$$("textarea.language-html.fill").forEach((textarea) => {
+document.querySelectorAll("textarea.language-html.fill").forEach((textarea) => {
 	textarea.value = html;
 });
 
-$$("textarea.language-css.fill").forEach((t) => {
+document.querySelectorAll("textarea.language-css.fill").forEach((t) => {
 	t.value = css;
 	t.dispatchEvent(new InputEvent("input"));
 });
 
-$$("textarea.language-js.fill").forEach((t) => {
+document.querySelectorAll("textarea.language-js.fill").forEach((t) => {
 	t.value = js;
 	t.dispatchEvent(new InputEvent("input"));
 });

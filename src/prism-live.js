@@ -22,6 +22,7 @@ import {
 } from "./editing.js";
 
 import "blissfuljs";
+import "prismjs";
 import "./prism-live.css";
 
 export const dependencies = [];
