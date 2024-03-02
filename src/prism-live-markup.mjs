@@ -3,11 +3,11 @@ const selfClosing = ["input", "img", "link", "meta", "base", "br", "hr"];
 export default {
 	id: "markup",
 	comments: {
-		multiline: ["<!--", "-->"]
+		multiline: ["<!--", "-->"],
 	},
 	selfClosing,
 	snippets: {
-		"submit": '<button type="submit">Submit</button>',
+		submit: '<button type="submit">Submit</button>',
 		custom: function (selector) {
 			var isName = /^[\w:-]+$/.test(selector);
 			var isSnippet = isName || selector.match(/^[.#\w:-]+(\{.+?\})?(\*\d+)?$/);
@@ -17,8 +17,7 @@ export default {
 			if (isName && inTag) {
 				// Attribute
 				return `${selector}="$1"`;
-			}
-			else if (isSnippet) {
+			} else if (isSnippet) {
 				var times = 1;
 				var content = "";
 
@@ -27,7 +26,8 @@ export default {
 					content = isSnippet[1].slice(1, -1);
 				}
 
-				if (isSnippet[2]) { // Times
+				if (isSnippet[2]) {
+					// Times
 					times = isSnippet[2].slice(1);
 				}
 
@@ -42,23 +42,22 @@ export default {
 				var classes = selector.match(/\.[\w-]+/g);
 
 				if (classes) {
-					classes = classes.map(x => x.slice(1));
+					classes = classes.map((x) => x.slice(1));
 					html += ` class="${classes.join(" ")}"`;
 				}
 
 				var selfClosing = selfClosing.indexOf(tag) > -1;
 
-				html += selfClosing? "$1 />$2" : ">$1";
+				html += selfClosing ? "$1 />$2" : ">$1";
 
 				var tagLength = html.length;
 				var ret = "";
 
-				for (var i=0; i<times; i++) {
+				for (var i = 0; i < times; i++) {
 					// Tag
 					if (selfClosing) {
 						ret += html;
-					}
-					else {
+					} else {
 						ret += `${html}${content}</${tag}>`;
 					}
 
@@ -69,6 +68,6 @@ export default {
 
 				return ret;
 			}
-		}
-	}
+		},
+	},
 };

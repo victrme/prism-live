@@ -1,0 +1,22 @@
+{
+	"name": "prism-live",
+	"version": "0.0.1",
+	"description": "Editable code areas powered by Prism.",
+	"main": "src/prism-live.mjs",
+	"scripts": {},
+	"keywords": [
+		"Prism",
+		"code",
+		"editor",
+		"syntax",
+		"highlight"
+	],
+	"author": "Victor Azevedo",
+	"license": "ISC",
+	"prettier": {
+		"tabWidth": 4,
+		"printWidth": 120,
+		"useTabs": true,
+		"semi": true
+	}
+}

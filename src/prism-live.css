@@ -7,7 +7,7 @@ div.prism-live {
 
 textarea.prism-live,
 pre.prism-live {
-	padding: .2rem .5rem;
+	padding: 0.2rem 0.5rem;
 	box-sizing: border-box;
 	margin: 0;
 }
@@ -28,7 +28,7 @@ textarea.prism-live {
 	background: transparent;
 	resize: none;
 	--selection-background: hsl(320, 80%, 25%);
-	--selection-color: hsla(0, 0%, 100%, .8);
+	--selection-color: hsla(0, 0%, 100%, 0.8);
 }
 
 @supports (not (caret-color: black)) and (-webkit-text-fill-color: black) {
@@ -38,17 +38,17 @@ textarea.prism-live {
 	}
 }
 
-	/* Setting specific colors is needed
+/* Setting specific colors is needed
 	 * because otherwise Firefox shows blank text */
-	textarea.prism-live::-moz-selection {
-		background: var(--selection-background);
-		color: var(--selection-color);
-	}
+textarea.prism-live::-moz-selection {
+	background: var(--selection-background);
+	color: var(--selection-color);
+}
 
-	textarea.prism-live::selection {
-		background: var(--selection-background);
-		color: var(--selection-color);
-	}
+textarea.prism-live::selection {
+	background: var(--selection-background);
+	color: var(--selection-color);
+}
 
 pre.prism-live {
 	flex: 1;
@@ -61,6 +61,6 @@ pre.prism-live {
 	padding-right: var(--scrollbar-width);
 }
 
-	pre.prism-live > code:empty::before {
-		content: " "
-	}
+pre.prism-live > code:empty::before {
+	content: " ";
+}

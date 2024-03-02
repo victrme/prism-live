@@ -1,1 +1,1 @@
-export const superKey = navigator.platform.indexOf("Mac") === 0? "metaKey" : "ctrlKey";
+export const superKey = navigator.platform.indexOf("Mac") === 0 ? "metaKey" : "ctrlKey";

@@ -17,16 +17,15 @@ import {
 	matchIndentation,
 	adjustIndentation,
 } from "./editing.js";
-import {
-	getNode,
-	getOffset,
-} from "./dom.js";
+
+import { getNode, getOffset } from "./dom.js";
+
 import * as env from "./env.js";
 import * as defaults from "./defaults.js";
 
-export const dependencies = [
-	$.load(new URL("../prism-live.css", import.meta.url)),
-];
+import "./prism-live.css";
+
+export const dependencies = [];
 
 let url = new URL(import.meta.url);
 let urlParams = url.searchParams;
@@ -37,23 +36,24 @@ if (urlParams.has("load")) {
 
 	if (load !== null) {
 		let ids = load.split(/,/);
-		dependencies.push(...ids.map(c => import(`./prism-live-${c}.mjs`).then(m => {
-			if (m.default) {
-				PrismLive.registerLanguage(m.default.id, m.default);
-			}
-			else {
-				for (let id in m) {
-					if (PrismLive.languages[id]) {
-						// Already registered, augment it
-						Object.assign(PrismLive.languages[id], m[id]);
+		dependencies.push(
+			...ids.map((c) =>
+				import(`./prism-live-${c}.mjs`).then((m) => {
+					if (m.default) {
+						PrismLive.registerLanguage(m.default.id, m.default);
+					} else {
+						for (let id in m) {
+							if (PrismLive.languages[id]) {
+								// Already registered, augment it
+								Object.assign(PrismLive.languages[id], m[id]);
+							} else {
+								PrismLive.registerLanguage(id, m[id]);
+							}
+						}
 					}
-					else {
-						PrismLive.registerLanguage(id, m[id]);
-					}
-
-				}
-			}
-		})));
+				})
+			)
+		);
 	}
 }
 
@@ -66,7 +66,7 @@ export default class PrismLive {
 
 		this.wrapper = $.create({
 			className: "prism-live",
-			around: this.source
+			around: this.source,
 		});
 
 		if (this.sourceType === "textarea") {
@@ -76,10 +76,9 @@ export default class PrismLive {
 			this.pre = $.create("pre", {
 				className: this.textarea.className + " no-whitespace-normalization",
 				contents: this.code,
-				before: this.textarea
+				before: this.textarea,
 			});
-		}
-		else {
+		} else {
 			this.pre = this.source;
 			// Normalize once, to fix indentation from markup and then remove normalization
 			// so we can enter blank lines etc
@@ -91,7 +90,7 @@ export default class PrismLive {
 			this.textarea = $.create("textarea", {
 				className: this.pre.className,
 				value: this.pre.textContent,
-				after: this.pre
+				after: this.pre,
 			});
 		}
 
@@ -110,17 +109,18 @@ export default class PrismLive {
 		}
 
 		$.bind(this.textarea, {
-			input: evt => this.update(),
+			input: (evt) => this.update(),
 
-			keyup: evt => {
-				if (evt.key == "Enter") { // Enter
+			keyup: (evt) => {
+				if (evt.key == "Enter") {
+					// Enter
 					// Maintain indent on line breaks
 					this.insert(this.currentIndent);
 					this.syncScroll();
 				}
 			},
 
-			keydown: evt => {
+			keydown: (evt) => {
 				if (evt.key == "Tab" && !evt.altKey) {
 					// Default is to move focus off the textarea
 					// this is never desirable in an editor
@@ -129,8 +129,7 @@ export default class PrismLive {
 					if (this.tabstops && this.tabstops.length > 0) {
 						// We have tabstops to go
 						this.moveCaret(this.tabstops.shift());
-					}
-					else if (this.hasSelection) {
+					} else if (this.hasSelection) {
 						var before = this.beforeCaret("\n");
 						var outdent = evt.shiftKey;
 
@@ -138,7 +137,7 @@ export default class PrismLive {
 
 						var selection = adjustIndentation(this.selection, {
 							relative: true,
-							indentation: outdent? -1 : 1
+							indentation: outdent ? -1 : 1,
 						});
 
 						this.replace(selection);
@@ -147,42 +146,39 @@ export default class PrismLive {
 							var indentStart = regexp.gm`^${this.indent}`;
 							var isBeforeIndented = indentStart.test(before);
 							this.selectionStart += before.length + 1 - (outdent + isBeforeIndented);
-						}
-						else { // Indent
+						} else {
+							// Indent
 							var hasLineAbove = before.length == this.selectionStart;
 							this.selectionStart += before.length + 1 + !hasLineAbove;
 						}
-					}
-					else {
+					} else {
 						// Nothing selected, expand snippet
 						let selector = this.beforeCaret()?.match(/\S*$/)?.[0];
 						var snippetExpanded = this.expandSnippet(selector);
 
 						if (snippetExpanded) {
-							requestAnimationFrame(() => this.textarea.dispatchEvent(new InputEvent("input", {bubbles: true})));
-						}
-						else {
+							requestAnimationFrame(() =>
+								this.textarea.dispatchEvent(new InputEvent("input", { bubbles: true }))
+							);
+						} else {
 							this.insert(this.indent);
 						}
 					}
-				}
-				else if (self.pairs[evt.key] && !evt[env.superKey]) {
+				} else if (self.pairs[evt.key] && !evt[env.superKey]) {
 					var other = self.pairs[evt.key];
 					this.wrapSelection({
 						before: evt.key,
 						after: other,
-						outside: true
+						outside: true,
 					});
 					evt.preventDefault();
-				}
-				else if (Object.values(self.pairs).includes(evt.key)) {
+				} else if (Object.values(self.pairs).includes(evt.key)) {
 					if (this.selectionStart == this.selectionEnd && this.textarea.value[this.selectionEnd] == evt.key) {
 						this.selectionStart += 1;
 						this.selectionEnd += 1;
 						evt.preventDefault();
 					}
-				}
-				else {
+				} else {
 					for (let shortcut in self.shortcuts) {
 						if (checkShortcut(shortcut, evt)) {
 							self.shortcuts[shortcut].call(this, evt);
@@ -192,26 +188,26 @@ export default class PrismLive {
 				}
 			},
 
-			click: evt => {
+			click: (evt) => {
 				var l = this.getLine();
 				var v = this.value;
 				var ss = this.selectionStart;
 				//console.log(ss, v[ss], l, v.slice(l.start, l.end));
 			},
 
-			"click keyup": evt => {
+			"click keyup": (evt) => {
 				if (!evt.key || evt.key.lastIndexOf("Arrow") > -1) {
 					// Caret moved
 					this.tabstops = null;
 				}
-			}
+			},
 		});
 
 		// this.syncScroll();
-		this.textarea.addEventListener("scroll", this, {passive: true});
+		this.textarea.addEventListener("scroll", this, { passive: true });
 
 		$.bind(window, {
-			"resize": evt => this.syncStyles()
+			resize: (evt) => this.syncStyles(),
 		});
 
 		// Copy styles with a delay
@@ -228,7 +224,7 @@ export default class PrismLive {
 		this.update();
 		this.lang = (this.code.className.match(/lang(?:uage)?-(\w+)/i) || [,])[1];
 
-		this.observer = new MutationObserver(r => {
+		this.observer = new MutationObserver((r) => {
 			if (document.activeElement !== this.textarea) {
 				this.textarea.value = this.pre.textContent;
 			}
@@ -236,7 +232,7 @@ export default class PrismLive {
 
 		this.observe();
 
-		this.source.dispatchEvent(new CustomEvent("prism-live-init", {bubbles: true, detail: this}));
+		this.source.dispatchEvent(new CustomEvent("prism-live-init", { bubbles: true, detail: this }));
 	}
 
 	handleEvent(evt) {
@@ -245,15 +241,18 @@ export default class PrismLive {
 		}
 	}
 
-	observe () {
-		return this.observer && this.observer.observe(this.pre, {
-			childList: true,
-			subtree: true,
-			characterData: true
-		});
+	observe() {
+		return (
+			this.observer &&
+			this.observer.observe(this.pre, {
+				childList: true,
+				subtree: true,
+				characterData: true,
+			})
+		);
 	}
 
-	unobserve () {
+	unobserve() {
 		if (this.observer) {
 			this.observer.takeRecords();
 			this.observer.disconnect();
@@ -270,8 +269,7 @@ export default class PrismLive {
 		if (text in context.snippets || text in self.snippets) {
 			// Static Snippets
 			var expansion = context.snippets[text] || self.snippets[text];
-		}
-		else if (context.snippets.custom) {
+		} else if (context.snippets.custom) {
 			var expansion = context.snippets.custom.call(this, text);
 		}
 
@@ -282,7 +280,7 @@ export default class PrismLive {
 			var str = expansion;
 			var match;
 
-			while (match = self.CARET_INDICATOR.exec(str)) {
+			while ((match = self.CARET_INDICATOR.exec(str))) {
 				stops.push(match.index + 1);
 				replacement.push(str.slice(0, match.index + match[1].length));
 				str = str.slice(match.index + match[0].length);
@@ -298,7 +296,7 @@ export default class PrismLive {
 			}
 
 			this.delete(text);
-			this.insert(replacement, {matchIndentation: true});
+			this.insert(replacement, { matchIndentation: true });
 			this.tabstops = stops;
 			this.moveCaret(this.tabstops.shift());
 		}
@@ -340,14 +338,14 @@ export default class PrismLive {
 	}
 
 	get currentIndent() {
-		let before = this.value.slice(0, this.selectionStart-1);
-		return before.match(/^[\t ]*/mg)?.at(-1) ?? "";
+		let before = this.value.slice(0, this.selectionStart - 1);
+		return before.match(/^[\t ]*/gm)?.at(-1) ?? "";
 	}
 
 	// Current language at caret position
 	get currentLanguage() {
 		var node = this.getNode();
-		node = node? node.parentNode : this.code;
+		node = node ? node.parentNode : this.code;
 		let lang = node.closest('[class*="language-"]')?.className.match(/language-(\w+)/)?.[1];
 		return self.aliases[lang] || lang;
 	}
@@ -376,12 +374,15 @@ export default class PrismLive {
 		}
 
 		// If there is a selection, and it's not the same as the previous selection, fire appropriate select event
-		if (this.selectionStart !== this.selectionEnd && (prevStart !== this.selectionStart || prevEnd !== this.selectionEnd)) {
-			this.textarea.dispatchEvent(new Event("select", {bubbles: true}));
+		if (
+			this.selectionStart !== this.selectionEnd &&
+			(prevStart !== this.selectionStart || prevEnd !== this.selectionEnd)
+		) {
+			this.textarea.dispatchEvent(new Event("select", { bubbles: true }));
 		}
 	}
 
-	update (force) {
+	update(force) {
 		var code = this.value;
 
 		// If code ends in newline then browser "conveniently" trims it
@@ -421,7 +422,7 @@ export default class PrismLive {
 		}
 
 		// This is primarily for supporting the line-numbers plugin.
-		this.textarea.style['padding-left'] = cs['padding-left'];
+		this.textarea.style["padding-left"] = cs["padding-left"];
 
 		this.update();
 	}
@@ -435,35 +436,35 @@ export default class PrismLive {
 		this.pre.scrollLeft = this.textarea.scrollLeft;
 	}
 
-	beforeCaretIndex (until = "") {
+	beforeCaretIndex(until = "") {
 		return beforeCaretIndex(until, this);
 	}
 
-	afterCaretIndex (until = "") {
+	afterCaretIndex(until = "") {
 		return afterCaretIndex(until, this);
 	}
 
-	beforeCaret (until = "") {
+	beforeCaret(until = "") {
 		return beforeCaret(until, this);
 	}
 
-	getLine () {
+	getLine() {
 		return getLineBounds(this);
 	}
 
-	afterCaret (until = "") {
+	afterCaret(until = "") {
 		return afterCaret(until, this);
 	}
 
-	setCaret (pos) {
+	setCaret(pos) {
 		return setCaret(pos, this);
 	}
 
-	moveCaret (chars) {
+	moveCaret(chars) {
 		return moveCaret(chars, this);
 	}
 
-	insert (text, {index} = {}) {
+	insert(text, { index } = {}) {
 		if (!text) {
 			return;
 		}
@@ -473,8 +474,7 @@ export default class PrismLive {
 		if (index === undefined) {
 			// No specified index, insert in current caret position
 			this.replace(text);
-		}
-		else {
+		} else {
 			// Specified index, first move caret there
 			var start = this.selectionStart;
 			var end = this.selectionEnd;
@@ -482,15 +482,12 @@ export default class PrismLive {
 			this.selectionStart = this.selectionEnd = index;
 			this.replace(text);
 
-			this.setSelection(
-				start + (index < start? text.length : 0),
-				end + (index <= end? text.length : 0)
-			);
+			this.setSelection(start + (index < start ? text.length : 0), end + (index <= end ? text.length : 0));
 		}
 	}
 
 	// Replace currently selected text
-	replace (text) {
+	replace(text) {
 		var hadSelection = this.hasSelection;
 
 		this.insertText(text);
@@ -498,12 +495,12 @@ export default class PrismLive {
 		if (hadSelection) {
 			// By default inserText places the caret at the end, losing any selection
 			// What we want instead is the replaced text to be selected
-			this.setSelection({start: this.selectionEnd - text.length});
+			this.setSelection({ start: this.selectionEnd - text.length });
 		}
 	}
 
 	// Set text between indexes and restore caret position
-	set (text, {start, end} = {}) {
+	set(text, { start, end } = {}) {
 		var ss = this.selectionStart;
 		var se = this.selectionEnd;
 
@@ -514,7 +511,7 @@ export default class PrismLive {
 		this.setSelection(ss, se);
 	}
 
-	insertText (text) {
+	insertText(text) {
 		if (!text) {
 			return;
 		}
@@ -529,12 +526,12 @@ export default class PrismLive {
 	 * @param start {Number} Character offset
 	 * @param end {Number} Character offset
 	 */
-	wrap ({before, after, start = this.selectionStart, end = this.selectionEnd} = {}) {
+	wrap({ before, after, start = this.selectionStart, end = this.selectionEnd } = {}) {
 		var ss = this.selectionStart;
 		var se = this.selectionEnd;
 		var between = this.value.slice(start, end);
 
-		this.set(before + between + after, {start, end});
+		this.set(before + between + after, { start, end });
 
 		if (ss > start) {
 			ss += before.length;
@@ -555,7 +552,7 @@ export default class PrismLive {
 		this.setSelection(ss, se);
 	}
 
-	wrapSelection (o = {}) {
+	wrapSelection(o = {}) {
 		var hadSelection = this.hasSelection;
 
 		this.replace(o.before + this.selection + o.after);
@@ -566,8 +563,7 @@ export default class PrismLive {
 				this.selectionStart += o.before.length;
 				this.selectionEnd -= o.after.length;
 			}
-		}
-		else {
+		} else {
 			this.moveCaret(-o.after.length);
 		}
 	}
@@ -586,50 +582,55 @@ export default class PrismLive {
 
 			if (comments.singleline && commentText.indexOf(comments.singleline) === 0) {
 				var end = start + commentText.length;
-				this.set(this.value.slice(start + comments.singleline.length, end), {start, end});
+				this.set(this.value.slice(start + comments.singleline.length, end), { start, end });
 				this.moveCaret(-comments.singleline.length);
-			}
-			else {
+			} else {
 				comments = comments.multiline || comments;
 				var end = start + commentText.length - comments[1].length;
-				this.set(this.value.slice(start + comments[0].length, end), {start, end: end + comments[1].length});
+				this.set(this.value.slice(start + comments[0].length, end), {
+					start,
+					end: end + comments[1].length,
+				});
 			}
-		}
-		else {
+		} else {
 			// Not inside comment, add
 			if (this.hasSelection) {
 				comments = comments.multiline || comments;
 
 				this.wrapSelection({
 					before: comments[0],
-					after: comments[1]
+					after: comments[1],
 				});
-			}
-			else {
+			} else {
 				// No selection, wrap line
 				// FIXME *inside indent*
-				comments = comments.singleline? [comments.singleline, ""] : comments.multiline || comments;
+				comments = comments.singleline ? [comments.singleline, ""] : comments.multiline || comments;
 				end = this.afterCaretIndex("\n");
 				this.wrap({
 					before: comments[0],
 					after: comments[1],
 					start: this.beforeCaretIndex("\n") + 1,
-					end: end < 0? this.value.length : end
+					end: end < 0 ? this.value.length : end,
 				});
 			}
 		}
 	}
 
-	duplicateContent () {
+	duplicateContent() {
 		var before = this.beforeCaret("\n");
 		var after = this.afterCaret("\n");
 		var text = before + this.selection + after;
 
-		this.insert(text, {index: this.selectionStart - before.length});
+		this.insert(text, { index: this.selectionStart - before.length });
 	}
 
-	delete (characters, {forward, pos} = {}) {
-		let { selectionStart, selectionEnd } = deleteText(characters, {forward, pos, selectionStart: this.selectionStart, selectionEnd: this.selectionEnd});
+	delete(characters, { forward, pos } = {}) {
+		let { selectionStart, selectionEnd } = deleteText(characters, {
+			forward,
+			pos,
+			selectionStart: this.selectionStart,
+			selectionEnd: this.selectionEnd,
+		});
 
 		this.setSelection(selectionStart, selectionEnd);
 	}
@@ -637,30 +638,30 @@ export default class PrismLive {
 	/**
 	 * Get the text node at a given chracter offset
 	 */
-	getNode (offset = this.selectionStart, container = this.code) {
+	getNode(offset = this.selectionStart, container = this.code) {
 		return getNode(offset, container);
 	}
 
 	/**
 	 * Get the character offset of a given node in the highlighted source
 	 */
-	getOffset (node) {
+	getOffset(node) {
 		return getOffset(node, this.code);
 	}
 
 	static registerLanguage(name, context, parent = self.languages.DEFAULT) {
 		Object.setPrototypeOf(context, parent);
-		return self.languages[name] = context;
+		return (self.languages[name] = context);
 	}
 
-	static create (source, ...args) {
+	static create(source, ...args) {
 		let ret = self.all.get(source);
 		if (!ret) {
 			ret = new self(source);
 		}
 		return ret;
 	}
-};
+}
 
 let self = PrismLive;
 
@@ -671,7 +672,7 @@ Object.assign(self, {
 	DEFAULT_INDENT: defaults.indent,
 	CARET_INDICATOR: /(^|[^\\])\$(\d+)/g,
 	snippets: {
-		"test": "Snippets work!",
+		test: "Snippets work!",
 	},
 	pairs: {
 		"(": ")",
@@ -679,28 +680,32 @@ Object.assign(self, {
 		"{": "}",
 		'"': '"',
 		"'": "'",
-		"`": "`"
+		"`": "`",
 	},
 	shortcuts: {
-		"Cmd + /": function() {
+		"Cmd + /": function () {
 			this.toggleComment();
 		},
-		"Ctrl + Shift + D": function() {
+		"Ctrl + Shift + D": function () {
 			this.duplicateContent();
-		}
+		},
 	},
 	languages: {
 		DEFAULT: {
 			comments: {
-				multiline: ["/*", "*/"]
+				multiline: ["/*", "*/"],
 			},
-			snippets: {}
-		}
+			snippets: {},
+		},
 	},
 	// Map of Prism language ids and their canonical name
 	aliases: (() => {
 		var ret = {};
-		var canonical = new WeakMap(Object.entries(Prism.languages).map(x => x.reverse()).reverse());
+		var canonical = new WeakMap(
+			Object.entries(Prism.languages)
+				.map((x) => x.reverse())
+				.reverse()
+		);
 
 		for (var id in Prism.languages) {
 			var grammar = Prism.languages[id];
@@ -714,6 +719,6 @@ Object.assign(self, {
 	})(),
 });
 
-$$(":not(.prism-live) > textarea.prism-live, :not(.prism-live) > pre.prism-live").forEach(source => self.create(source));
-
-
+$$(":not(.prism-live) > textarea.prism-live, :not(.prism-live) > pre.prism-live").forEach((source) =>
+	self.create(source)
+);
