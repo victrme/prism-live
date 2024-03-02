@@ -1,4 +1,4 @@
-import "@victr/prism-live/prism-live.css";
+import "@victr/prism-live/style";
 import "@victr/prism-live";
 
 const html = `<html lang="en">
