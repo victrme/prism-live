@@ -1,5 +1,5 @@
-import "../../node_modules/prismjs/themes/prism.css";
-import "../../src/prism-live.js";
+import "@victr/prism-live/prism-live.css";
+import "@victr/prism-live";
 
 const html = `<html lang="en">
 <head>
