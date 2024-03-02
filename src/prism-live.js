@@ -4,7 +4,7 @@
 	@author Lea Verou
 */
 import { getNode, getOffset } from "./dom.js";
-import { regexp, $, $$ } from "./util.js";
+import { regexp } from "./util.js";
 import { superKey } from "./env.js";
 import defaults from "./defaults.js";
 import {
@@ -21,6 +21,7 @@ import {
 	adjustIndentation,
 } from "./editing.js";
 
+import "blissfuljs";
 import "./prism-live.css";
 
 export const dependencies = [];

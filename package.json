@@ -2,8 +2,8 @@
 	"name": "prism-live",
 	"version": "0.0.1",
 	"description": "Editable code areas powered by Prism.",
-	"main": "src/prism-live.js",
-	"scripts": {},
+	"author": "Lea Verou (http://lea.verou.me)",
+	"license": "ISC",
 	"keywords": [
 		"Prism",
 		"code",
@@ -11,8 +11,13 @@
 		"syntax",
 		"highlight"
 	],
-	"author": "Victor Azevedo",
-	"license": "ISC",
+	"main": "src/prism-live.js",
+	"scripts": {
+		"test": ""
+	},
+	"dependencies": {
+		"blissfuljs": "^1.0.6"
+	},
 	"prettier": {
 		"tabWidth": 4,
 		"printWidth": 120,

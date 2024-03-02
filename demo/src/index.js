@@ -1,5 +1,6 @@
-import $$ from "../../blissful-v2/$$.js";
+import "blissfuljs";
 import "prismjs";
+
 import "../node_modules/prismjs/themes/prism.css";
 import "../../src/prism-live.js";
 
