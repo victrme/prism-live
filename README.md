@@ -25,7 +25,7 @@ Use a Prism theme stylesheet first
 Import prism-live in a javascript file
 ```javascript
 import "@victr/prism-live"
-import "@victr/prism-live/prism-live.css"
+import "@victr/prism-live/style"
 
 // nothing else to do for now
 ```
@@ -35,7 +35,7 @@ Or in a script tag
 <head>
   <script type="module">
     import "@victr/prism-live";
-    import "@victr/prism-live/prism-live.css" assert { type: "css" };
+    import "@victr/prism-live/style" assert { type: "css" };
   </script>
 </head>
 ```
