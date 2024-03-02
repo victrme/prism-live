@@ -1,3 +1,4 @@
-export const indent = "\t";
-
-export const caretIndicator = /(^|[^\\])\$(\d+)/g;
+export default {
+	indent: "\t",
+	caretIndicator: /(^|[^\\])\$(\d+)/g,
+};

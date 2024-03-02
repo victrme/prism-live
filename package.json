@@ -2,7 +2,7 @@
 	"name": "prism-live",
 	"version": "0.0.1",
 	"description": "Editable code areas powered by Prism.",
-	"main": "src/prism-live.mjs",
+	"main": "src/prism-live.js",
 	"scripts": {},
 	"keywords": [
 		"Prism",

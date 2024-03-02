@@ -3,7 +3,10 @@
 	Works best in Chrome. Currently only very basic support in other browsers (no snippets, no shortcuts)
 	@author Lea Verou
 */
+import { getNode, getOffset } from "./dom.js";
 import { $, $$, regexp } from "./util.js";
+import { superKey } from "./env.js";
+import defaults from "./defaults.js";
 import {
 	checkShortcut,
 	getLineBounds,
@@ -18,11 +21,6 @@ import {
 	adjustIndentation,
 } from "./editing.js";
 
-import { getNode, getOffset } from "./dom.js";
-
-import * as env from "./env.js";
-import * as defaults from "./defaults.js";
-
 import "./prism-live.css";
 
 export const dependencies = [];
@@ -35,7 +33,7 @@ if (urlParams.has("load")) {
 	let load = urlParams.get("load");
 
 	if (load !== null) {
-		let ids = load.split(/,/);
+		let ids = load.split(",");
 		dependencies.push(
 			...ids.map((c) =>
 				import(`./prism-live-${c}.mjs`).then((m) => {
@@ -164,7 +162,7 @@ export default class PrismLive {
 							this.insert(this.indent);
 						}
 					}
-				} else if (self.pairs[evt.key] && !evt[env.superKey]) {
+				} else if (self.pairs[evt.key] && !evt[superKey]) {
 					var other = self.pairs[evt.key];
 					this.wrapSelection({
 						before: evt.key,

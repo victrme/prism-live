@@ -1,7 +1,7 @@
 import "blissfuljs";
 import "prismjs";
 import "../node_modules/prismjs/themes/prism.css";
-import "../../src/prism-live.mjs";
+import "../../src/prism-live.js";
 
 const html = `<html lang="en">
 <head>

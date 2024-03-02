@@ -1,6 +1,6 @@
-import * as env from "./env.js";
-import * as defaults from "./defaults.js";
+import { superKey } from "./env.js";
 import { regexp } from "./util.js";
+import defaults from "./defaults.js";
 
 export function checkShortcut(shortcut, evt) {
 	return shortcut
@@ -9,7 +9,7 @@ export function checkShortcut(shortcut, evt) {
 		.every((key) => {
 			switch (key) {
 				case "Cmd":
-					return evt[env.superKey];
+					return evt[superKey];
 				case "Ctrl":
 					return evt.ctrlKey;
 				case "Shift":
