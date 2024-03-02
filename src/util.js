@@ -1,8 +1,8 @@
-import $ from "./blissful-v2/$.js";
-import $$ from "./blissful-v2/$$.js";
-import create from "./blissful-v2/dom/create.js";
-import bind from "./blissful-v2/events/bind.js";
-import load from "./blissful-v2/async/load.js";
+import $ from "../blissful-v2/$.js";
+import $$ from "../blissful-v2/$$.js";
+import create from "../blissful-v2/dom/create.js";
+import bind from "../blissful-v2/events/bind.js";
+import load from "../blissful-v2/async/load.js";
 
 Object.assign($, { create, bind, load });
 export { $, $$, create, bind, load };

@@ -9,7 +9,6 @@
 		"preview": "vite build && vite preview"
 	},
 	"devDependencies": {
-		"blissfuljs": "^1.0.6",
 		"prismjs": "^1.29.0",
 		"vite": "^5.1.4"
 	}
