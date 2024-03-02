@@ -4,7 +4,7 @@
 	@author Lea Verou
 */
 import { getNode, getOffset } from "./dom.js";
-import { $, $$, regexp } from "./util.js";
+import { regexp, $, $$ } from "./util.js";
 import { superKey } from "./env.js";
 import defaults from "./defaults.js";
 import {
