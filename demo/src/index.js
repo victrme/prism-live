@@ -1,5 +1,5 @@
-import "@victr/prism-live/style";
-import "@victr/prism-live";
+import PrismLive from "../../src/prism-live.js";
+import "../../src/prism-live.css";
 
 const html = `<html lang="en">
 <head>
@@ -54,6 +54,8 @@ for (var id in Prism.languages) {
 return ret;`;
 
 //
+
+PrismLive.createAll();
 
 document.querySelectorAll("textarea.language-html.fill").forEach((textarea) => {
 	textarea.value = html;

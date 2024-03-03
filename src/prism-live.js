@@ -23,41 +23,6 @@ import {
 
 import "blissfuljs";
 import "prismjs";
-import "./prism-live.css";
-
-export const dependencies = [];
-
-let url = new URL(import.meta.url);
-let urlParams = url.searchParams;
-
-if (urlParams.has("load")) {
-	// Tiny dynamic loader. Use e.g. ?load=css,markup,javascript to load components
-	let load = urlParams.get("load");
-
-	if (load !== null) {
-		let ids = load.split(",");
-		dependencies.push(
-			...ids.map((c) =>
-				import(`./prism-live-${c}.mjs`).then((m) => {
-					if (m.default) {
-						PrismLive.registerLanguage(m.default.id, m.default);
-					} else {
-						for (let id in m) {
-							if (PrismLive.languages[id]) {
-								// Already registered, augment it
-								Object.assign(PrismLive.languages[id], m[id]);
-							} else {
-								PrismLive.registerLanguage(id, m[id]);
-							}
-						}
-					}
-				})
-			)
-		);
-	}
-}
-
-export const ready = Promise.all(dependencies);
 
 export default class PrismLive {
 	constructor(source) {
@@ -649,9 +614,9 @@ export default class PrismLive {
 		return getOffset(node, this.code);
 	}
 
-	static registerLanguage(name, context, parent = self.languages.DEFAULT) {
+	static registerLanguage(context, parent = self.languages.DEFAULT) {
 		Object.setPrototypeOf(context, parent);
-		return (self.languages[name] = context);
+		return (self.languages[context.id] = context);
 	}
 
 	static create(source, ...args) {
@@ -661,6 +626,12 @@ export default class PrismLive {
 		}
 		return ret;
 	}
+
+	static createAll() {
+		$$(":not(.prism-live) > textarea.prism-live, :not(.prism-live) > pre.prism-live").forEach((source) =>
+			self.create(source)
+		);
+	}
 }
 
 let self = PrismLive;
@@ -668,7 +639,6 @@ let self = PrismLive;
 // Static properties
 Object.assign(self, {
 	all: new WeakMap(),
-	ready,
 	DEFAULT_INDENT: defaults.indent,
 	CARET_INDICATOR: /(^|[^\\])\$(\d+)/g,
 	snippets: {
@@ -718,7 +688,3 @@ Object.assign(self, {
 		return ret;
 	})(),
 });
-
-$$(":not(.prism-live) > textarea.prism-live, :not(.prism-live) > pre.prism-live").forEach((source) =>
-	self.create(source)
-);
