@@ -21,8 +21,8 @@ import {
 	adjustIndentation,
 } from "./editing.js";
 
-import "blissfuljs";
-import "prismjs";
+import "#blissfuljs";
+import "#prismjs";
 
 export default class PrismLive {
 	constructor(source) {
