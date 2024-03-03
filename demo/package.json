@@ -9,7 +9,7 @@
 		"preview": "vite build && vite preview"
 	},
 	"devDependencies": {
-		"@victr/prism-live": "^0.0.2",
+		"@victr/prism-live": "^0.0.3",
 		"vite": "^5.1.4"
 	}
 }
