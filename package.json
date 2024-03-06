@@ -1,6 +1,6 @@
 {
 	"name": "@victr/prism-live",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "Editable code areas powered by Prism.",
 	"author": "Lea Verou (http://lea.verou.me)",
 	"license": "ISC",
@@ -22,16 +22,8 @@
 		"./javascript": "./src/prism-live-javascript.js",
 		"./style.css": "./src/prism-live.css"
 	},
-	"imports": {
-		"#blissfuljs": "blissfuljs",
-		"#prismjs": "prismjs"
-	},
 	"scripts": {
 		"test": ""
-	},
-	"dependencies": {
-		"blissfuljs": "^1.0.6",
-		"prismjs": "^1.29.0"
 	},
 	"prettier": {
 		"tabWidth": 4,

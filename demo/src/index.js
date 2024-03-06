@@ -1,13 +1,8 @@
-import PrismLive from "@victr/prism-live";
-import javascript from "@victr/prism-live/javascript";
-import markup from "@victr/prism-live/markup";
-import css from "@victr/prism-live/css";
-import "@victr/prism-live/style.css";
-
-PrismLive.registerLanguage(javascript);
-PrismLive.registerLanguage(markup);
-PrismLive.registerLanguage(css);
-PrismLive.createAll();
+import PrismLive from "../../src/prism-live";
+import javascript from "../../src/prism-live-javascript";
+import markup from "../../src/prism-live-markup";
+import css from "../../src/prism-live-css";
+import "../../src/prism-live.css";
 
 document.querySelectorAll("textarea.language-html.fill").forEach((textarea) => {
 	textarea.value = `<html lang="en">
@@ -32,14 +27,14 @@ document.querySelectorAll("textarea.language-css.fill").forEach((t) => {
 		display: flex;
 		flex-flow: column;
 	}
-	
+
 	textarea.prism-live,
 	pre.prism-live {
 		padding: 0.2rem 0.5rem;
 		box-sizing: border-box;
 		margin: 0;
 	}
-	
+
 	@supports (not (caret-color: black)) and (-webkit-text-fill-color: black) {
 		textarea.prism-live {
 			color: inherit;
@@ -56,15 +51,20 @@ document.querySelectorAll("textarea.language-js.fill").forEach((t) => {
 			.map((x) => x.reverse())
 			.reverse()
 	);
-	
+
 	for (var id in Prism.languages) {
 		var grammar = Prism.languages[id];
-	
+
 		if (typeof grammar !== "function") {
 			ret[id] = canonical.get(grammar);
 		}
 	}
-	
+
 	return ret;`;
 	t.dispatchEvent(new InputEvent("input"));
 });
+
+PrismLive.registerLanguage(javascript);
+PrismLive.registerLanguage(markup);
+PrismLive.registerLanguage(css);
+PrismLive.createAll();
