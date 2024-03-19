@@ -21,17 +21,10 @@ import {
 	adjustIndentation,
 } from "./editing.js";
 
-import { Prism } from "./prism/prism.js";
-import javascript from "./prism/javascript.js";
-import markup from "./prism/markup.js";
-import css from "./prism/css.js";
-
-const TestPrism = new Prism();
-
-TestPrism.components.add(javascript, markup, css);
-
 export default class PrismLive {
 	constructor(source) {
+		this.Prism;
+
 		this.source = source;
 		this.sourceType = source.nodeName.toLowerCase();
 
@@ -371,7 +364,7 @@ export default class PrismLive {
 		this.unobserve();
 		this.code.textContent = code;
 
-		TestPrism.highlightElement(this.code);
+		self.Prism.highlightElement(this.code);
 
 		this.observe();
 	}
@@ -620,6 +613,10 @@ export default class PrismLive {
 		return getOffset(node, this.code);
 	}
 
+	static addPrism(value) {
+		this.Prism = value;
+	}
+
 	static registerLanguage(context, parent = self.languages.DEFAULT) {
 		Object.setPrototypeOf(context, parent);
 		return (self.languages[context.id] = context);
@@ -676,21 +673,6 @@ Object.assign(self, {
 	},
 	// Map of Prism language ids and their canonical name
 	aliases: (() => {
-		// var ret = {};
-		// var canonical = new WeakMap(
-		// 	Object.entries(Prism.languages)
-		// 		.map((x) => x.reverse())
-		// 		.reverse()
-		// );
-
-		// for (var id in Prism.languages) {
-		// 	var grammar = Prism.languages[id];
-
-		// 	if (typeof grammar !== "function") {
-		// 		ret[id] = canonical.get(grammar);
-		// 	}
-		// }
-
-		return TestPrism.components.aliasMap;
+		return self.Prism?.components.aliasMap;
 	})(),
 });

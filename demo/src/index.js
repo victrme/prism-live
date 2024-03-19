@@ -1,8 +1,13 @@
+import { Prism } from "../../src/prism/prism.js";
 import PrismLive from "../../src/prism-live";
-import javascript from "../../src/prism-live-javascript";
-import markup from "../../src/prism-live-markup";
-import css from "../../src/prism-live-css";
 import "../../src/prism-live.css";
+
+import languageJavascript from "../../src/prism/javascript.js";
+import snippetsJavascript from "../../src/prism-live-javascript";
+import languageMarkup from "../../src/prism/markup.js";
+import snippetsMarkup from "../../src/prism-live-markup";
+import languageCss from "../../src/prism/css.js";
+import snippetsCss from "../../src/prism-live-css";
 
 document.querySelectorAll("textarea.language-html.fill").forEach((textarea) => {
 	textarea.value = `<html lang="en">
@@ -64,7 +69,15 @@ document.querySelectorAll("textarea.language-js.fill").forEach((t) => {
 	t.dispatchEvent(new InputEvent("input"));
 });
 
-PrismLive.registerLanguage(javascript);
-PrismLive.registerLanguage(markup);
-PrismLive.registerLanguage(css);
+const prism = new Prism();
+
+prism.addLanguage(languageJavascript);
+prism.addLanguage(languageMarkup);
+prism.addLanguage(languageCss);
+prism.highlightAll();
+
+PrismLive.registerLanguage(snippetsJavascript);
+PrismLive.registerLanguage(snippetsMarkup);
+PrismLive.registerLanguage(snippetsCss);
+PrismLive.addPrism(prism);
 PrismLive.createAll();
