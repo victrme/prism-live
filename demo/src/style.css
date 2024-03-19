@@ -9,7 +9,7 @@ h3,
 h4,
 h5,
 h6 {
-	font-family: Didot, 'Didot LT STD', Bodoni MT, 'Hoefler Text', Garamond, 'Times New Roman', serif;
+	font-family: Didot, "Didot LT STD", Bodoni MT, "Hoefler Text", Garamond, "Times New Roman", serif;
 }
 
 header {
@@ -55,7 +55,9 @@ header h2 {
 
 main,
 footer {
+	max-width: 1000px;
 	padding: 1em 3em;
+	margin: auto;
 }
 
 footer {
