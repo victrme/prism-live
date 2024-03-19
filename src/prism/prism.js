@@ -1,23 +1,27 @@
 // src/shared/dom-util.ts
-var lang = /(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i;
+const lang = /(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i;
+
 function getLanguage(element) {
 	let e = element;
+
 	for (; e; e = e.parentElement) {
 		const m = lang.exec(e.className);
 		if (m) {
 			return m[1].toLowerCase();
 		}
 	}
+
 	return "none";
 }
+
 function setLanguage(element, language) {
 	element.className = element.className.replace(RegExp(lang, "gi"), "");
 	element.classList.add("language-" + language);
 }
 
 // src/shared/symbols.ts
-var rest = Symbol.for("Prism rest");
-var tokenize = Symbol.for("Prism tokenize");
+const rest = Symbol.for("Prism rest");
+const tokenize = Symbol.for("Prism tokenize");
 
 // src/shared/util.ts
 function htmlEncode(text) {
@@ -26,7 +30,9 @@ function htmlEncode(text) {
 		.replace(/</g, "&lt;")
 		.replace(/\u00a0/g, " ");
 }
-var isReadonlyArray = Array.isArray;
+
+const isReadonlyArray = Array.isArray;
+
 function forEach(value, callbackFn) {
 	if (Array.isArray(value)) {
 		value.forEach(callbackFn);
@@ -34,41 +40,49 @@ function forEach(value, callbackFn) {
 		callbackFn(value, 0);
 	}
 }
+
 function capitalize(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
 function kebabToCamelCase(kebab) {
 	const [first, ...others] = kebab.split(/-/);
 	return first + others.map(capitalize).join("");
 }
 
 // src/core/hook-state.ts
-var HookState = class {
+class HookState {
 	constructor() {
 		this._data = /* @__PURE__ */ new Map();
 	}
+
 	has(key) {
 		return this._data.has(key);
 	}
+
 	get(key, defaultValue) {
 		let current = this._data.get(key);
+
 		if (current === void 0) {
 			current = defaultValue;
 			this._data.set(key, current);
 		}
+
 		return current;
 	}
+
 	set(key, value) {
 		this._data.set(key, value);
 	}
-};
+}
 
 // src/core/hooks.ts
-var Hooks = class {
+class Hooks {
 	constructor() {
 		// eslint-disable-next-line func-call-spacing
 		this._all = /* @__PURE__ */ new Map();
 	}
+
 	/**
 	 * Adds the given callback to the list of callbacks for the given hook and returns a function that
 	 * removes the hook again when called.
@@ -99,6 +113,7 @@ var Hooks = class {
 			}
 		};
 	}
+
 	/**
 	 * Runs a hook invoking all registered callbacks with the given environment variables.
 	 *
@@ -116,10 +131,10 @@ var Hooks = class {
 			callback(env);
 		}
 	}
-};
+}
 
 // src/core/linked-list.ts
-var LinkedList = class {
+class LinkedList {
 	constructor() {
 		const head = { value: null, prev: null, next: null };
 		const tail = { value: null, prev: head, next: null };
@@ -128,6 +143,7 @@ var LinkedList = class {
 		this.tail = tail;
 		this.length = 0;
 	}
+
 	/**
 	 * Adds a new node with the given value to the list.
 	 *
@@ -143,6 +159,7 @@ var LinkedList = class {
 		this.length++;
 		return newNode;
 	}
+
 	/**
 	 * Removes `count` nodes after the given node. The given node will not be removed.
 	 */
@@ -156,6 +173,7 @@ var LinkedList = class {
 		next.prev = node;
 		this.length -= i;
 	}
+
 	toArray() {
 		const array = [];
 		let node = this.head.next;
@@ -165,16 +183,19 @@ var LinkedList = class {
 		}
 		return array;
 	}
-};
+}
 
 // src/shared/language-util.ts
 function extend(grammar, id, reDef) {
 	const lang2 = cloneGrammar(grammar, id);
+
 	for (const key in reDef) {
 		lang2[key] = reDef[key];
 	}
+
 	return lang2;
 }
+
 function cloneGrammar(grammar, id) {
 	const result = {};
 	const visited = /* @__PURE__ */ new Map();
@@ -198,6 +219,7 @@ function cloneGrammar(grammar, id) {
 			return copy;
 		}
 	}
+
 	function cloneTokens(value) {
 		if (!value) {
 			return void 0;
@@ -207,6 +229,7 @@ function cloneGrammar(grammar, id) {
 			return cloneToken(value);
 		}
 	}
+
 	function cloneRef(ref) {
 		if (ref === id) {
 			return result;
@@ -216,6 +239,7 @@ function cloneGrammar(grammar, id) {
 			return clone(ref);
 		}
 	}
+
 	function clone(value) {
 		let mapped = visited.get(value);
 		if (mapped === void 0) {
@@ -235,11 +259,12 @@ function cloneGrammar(grammar, id) {
 		}
 		return mapped;
 	}
+
 	return clone(grammar);
 }
 
 // src/core/registry.ts
-var Registry = class {
+class Registry {
 	constructor(Prism2) {
 		/**
 		 * A map from the aliases of components to the id of the component with that alias.
@@ -251,6 +276,7 @@ var Registry = class {
 		this.entries = /* @__PURE__ */ new Map();
 		this.Prism = Prism2;
 	}
+
 	/**
 	 * If the given name is a known alias, then the id of the component of the alias will be returned. Otherwise, the
 	 * `name` will be returned as is.
@@ -258,23 +284,28 @@ var Registry = class {
 	resolveAlias(name) {
 		return this.aliasMap.get(name) ?? name;
 	}
+
 	/**
 	 * Returns whether this registry has a component with the given name or alias.
 	 */
 	has(name) {
 		return this.entries.has(this.resolveAlias(name));
 	}
+
 	add(...components) {
 		const added = /* @__PURE__ */ new Set();
 		const register = (proto) => {
 			const { id } = proto;
+
 			if (this.entries.has(id)) {
 				return;
 			}
+
 			this.entries.set(id, { proto });
 			added.add(id);
 			forEach(proto.alias, (alias) => this.aliasMap.set(alias, id));
 			forEach(proto.require, register);
+
 			if (proto.plugin) {
 				this.Prism.plugins[kebabToCamelCase(id)] = proto.plugin(this.Prism);
 			}
@@ -282,9 +313,11 @@ var Registry = class {
 		components.forEach(register);
 		this.update(added);
 	}
+
 	update(changed) {
 		const updateCache = /* @__PURE__ */ new Map();
 		const idStack = [];
+
 		const performUpdateUncached = (id) => {
 			const circularStart = idStack.indexOf(id);
 			if (circularStart !== idStack.length - 1) {
@@ -302,6 +335,7 @@ var Registry = class {
 			entry.evaluatedEffect = entry.proto.effect?.(this.Prism);
 			return true;
 		};
+
 		const performUpdate = (id) => {
 			let status = updateCache.get(id);
 			if (status === void 0) {
@@ -312,6 +346,7 @@ var Registry = class {
 			}
 			return status;
 		};
+
 		const shouldRunEffects = (proto) => {
 			let depsChanged = false;
 			forEach(proto.require, ({ id }) => {
@@ -328,6 +363,7 @@ var Registry = class {
 		};
 		this.entries.forEach((_, id) => performUpdate(id));
 	}
+
 	getLanguage(id) {
 		id = this.resolveAlias(id);
 		const entry = this.entries.get(id);
@@ -354,10 +390,10 @@ var Registry = class {
 			extend: (id2, ref) => extend(required(id2), id2, ref),
 		}));
 	}
-};
+}
 
 // src/core/token.ts
-var Token = class {
+class Token {
 	/**
 	 * Creates a new token.
 	 *
@@ -385,15 +421,24 @@ var Token = class {
 		}
 		aliases.push(alias);
 	}
-};
+}
 
 // src/core/prism.ts
-var Prism = class {
+class Prism {
 	constructor() {
 		this.hooks = new Hooks();
 		this.components = new Registry(this);
 		this.plugins = {};
 	}
+
+	/**
+	 * NEW: Add a language grammar object to Prism.
+	 * @param {Object} language
+	 */
+	addLanguage(language) {
+		this.components.add(language);
+	}
+
 	/**
 	 * This is the most high-level function in Prism’s API.
 	 * It queries all the elements that have a `.language-xxxx` class and then calls {@link Prism#highlightElement} on
@@ -456,30 +501,41 @@ var Prism = class {
 			code,
 			state: new HookState(),
 		};
+
 		const insertHighlightedCode = (highlightedCode) => {
 			assertEnv(env);
+
 			env.highlightedCode = highlightedCode;
 			this.hooks.run("before-insert", env);
+
 			env.element.innerHTML = env.highlightedCode;
+
 			this.hooks.run("after-highlight", env);
 			this.hooks.run("complete", env);
+
 			callback?.(env.element);
 		};
+
 		this.hooks.run("before-sanity-check", env);
 		parent = env.element.parentElement;
+
 		if (parent && parent.nodeName.toLowerCase() === "pre" && !parent.hasAttribute("tabindex")) {
 			parent.setAttribute("tabindex", "0");
 		}
+
 		if (!env.code) {
 			this.hooks.run("complete", env);
 			callback?.(env.element);
 			return;
 		}
+
 		this.hooks.run("before-highlight", env);
+
 		if (!env.grammar) {
 			insertHighlightedCode(htmlEncode(env.code));
 			return;
 		}
+
 		if (async) {
 			async({
 				language: env.language,
@@ -516,10 +572,12 @@ var Prism = class {
 			grammar,
 			language,
 		};
+
 		this.hooks.run("before-tokenize", env);
 		if (!env.grammar) {
 			throw new Error('The language "' + env.language + '" has no grammar.');
 		}
+
 		assertEnv(env);
 		env.tokens = this.tokenize(env.code, env.grammar);
 		this.hooks.run("after-tokenize", env);
@@ -549,14 +607,18 @@ var Prism = class {
 	 */
 	tokenize(text, grammar) {
 		const customTokenize = grammar[tokenize];
+
 		if (customTokenize) {
 			return customTokenize(text, grammar, this);
 		}
+
 		let restGrammar = resolve(this.components, grammar[rest]);
+
 		while (restGrammar) {
 			grammar = { ...grammar, ...restGrammar };
 			restGrammar = resolve(this.components, restGrammar[rest]);
 		}
+
 		const tokenList = new LinkedList();
 		tokenList.addAfter(tokenList.head, text);
 		this._matchGrammar(text, tokenList, grammar, tokenList.head, 0);
@@ -565,10 +627,13 @@ var Prism = class {
 	_matchGrammar(text, tokenList, grammar, startNode, startPos, rematch) {
 		for (const token in grammar) {
 			const tokenValue = grammar[token];
+
 			if (!grammar.hasOwnProperty(token) || !tokenValue) {
 				continue;
 			}
+
 			const patterns = Array.isArray(tokenValue) ? tokenValue : [tokenValue];
+
 			for (let j = 0; j < patterns.length; ++j) {
 				if (rematch && rematch.cause === `${token},${j}`) {
 					return;
@@ -669,22 +734,28 @@ var Prism = class {
 			}
 		}
 	}
-};
+}
+
 function assertEnv(env) {}
+
 function matchPattern(pattern, pos, text, lookbehind) {
 	pattern.lastIndex = pos;
 	const match = pattern.exec(text);
+
 	if (match && lookbehind && match[1]) {
 		const lookbehindLength = match[1].length;
 		match.index += lookbehindLength;
 		match[0] = match[0].slice(lookbehindLength);
 	}
+
 	return match;
 }
+
 function stringify(o, language, hooks) {
 	if (typeof o === "string") {
 		return htmlEncode(o);
 	}
+
 	if (Array.isArray(o)) {
 		let s = "";
 		o.forEach((e) => {
@@ -692,6 +763,7 @@ function stringify(o, language, hooks) {
 		});
 		return s;
 	}
+
 	const env = {
 		type: o.type,
 		content: stringify(o.content, language, hooks),
@@ -700,6 +772,7 @@ function stringify(o, language, hooks) {
 		attributes: {},
 		language,
 	};
+
 	const aliases = o.alias;
 	if (aliases) {
 		if (Array.isArray(aliases)) {
@@ -708,15 +781,19 @@ function stringify(o, language, hooks) {
 			env.classes.push(aliases);
 		}
 	}
+
 	hooks.run("wrap", env);
 	let attributes = "";
+
 	for (const name in env.attributes) {
 		attributes += " " + name + '="' + (env.attributes[name] || "").replace(/"/g, "&quot;") + '"';
 	}
+
 	return (
 		"<" + env.tag + ' class="' + env.classes.join(" ") + '"' + attributes + ">" + env.content + "</" + env.tag + ">"
 	);
 }
+
 function toGrammarToken(pattern) {
 	if (!pattern.pattern) {
 		return { pattern };
@@ -724,6 +801,7 @@ function toGrammarToken(pattern) {
 		return pattern;
 	}
 }
+
 function resolve(components, reference) {
 	if (reference) {
 		if (typeof reference === "string") {
@@ -733,6 +811,7 @@ function resolve(components, reference) {
 	}
 	return void 0;
 }
+
 export { Prism, Token };
 /**
  * Prism: Lightweight, robust, elegant syntax highlighting
