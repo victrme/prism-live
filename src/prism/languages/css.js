@@ -1,34 +1,12 @@
-// src/shared/symbols.ts
-var rest = Symbol.for("Prism rest");
-var tokenize = Symbol.for("Prism tokenize");
+import { insertBefore } from "../utils/language";
+import { rest } from "../utils/symbols";
 
-// src/shared/language-util.ts
-function insertBefore(grammar, before, insert) {
-	if (!(before in grammar)) {
-		throw new Error(`"${before}" has to be a key of grammar.`);
-	}
-	const grammarEntries = Object.entries(grammar);
-	for (const [key] of grammarEntries) {
-		delete grammar[key];
-	}
-	for (const [key, value] of grammarEntries) {
-		if (key === before) {
-			for (const insertKey of Object.keys(insert)) {
-				grammar[insertKey] = insert[insertKey];
-			}
-		}
-		if (!insert.hasOwnProperty(key)) {
-			grammar[key] = value;
-		}
-	}
-}
-
-// src/languages/prism-css.ts
-var prism_css_default = {
+export default {
 	id: "css",
 	optional: "css-extras",
 	grammar({ getOptionalLanguage }) {
 		const string = /(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;
+
 		const css = {
 			comment: /\/\*[\s\S]*?\*\//,
 			atrule: {
@@ -68,7 +46,7 @@ var prism_css_default = {
 				},
 			},
 			selector: {
-				pattern: RegExp(`(^|[{}\\s])[^{}\\s](?:[^{};"'\\s]|\\s+(?![\\s{])|` + string.source + ")*(?=\\s*\\{)"),
+				pattern: RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|" + string.source + ")*(?=\\s*\\{)"),
 				lookbehind: true,
 				inside: "css-selector",
 			},
@@ -91,11 +69,12 @@ var prism_css_default = {
 			},
 			punctuation: /[(){};:,]/,
 		};
+
 		const extras = getOptionalLanguage("css-extras");
 		if (extras) {
 			insertBefore(css, "function", extras);
 		}
+
 		return css;
 	},
 };
-export { prism_css_default as default };

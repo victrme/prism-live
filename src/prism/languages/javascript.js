@@ -1,87 +1,12 @@
-// src/shared/symbols.ts
-var rest = Symbol.for("Prism rest");
-var tokenize = Symbol.for("Prism tokenize");
+import { JS_TEMPLATE, JS_TEMPLATE_INTERPOLATION } from "../utils/patterns";
+import { insertBefore } from "../utils/language";
+import { toArray } from "../utils";
+import { rest } from "../utils/symbols";
+import clike from "./clike";
 
-// src/shared/language-util.ts
-function insertBefore(grammar, before, insert) {
-	if (!(before in grammar)) {
-		throw new Error(`"${before}" has to be a key of grammar.`);
-	}
-	const grammarEntries = Object.entries(grammar);
-	for (const [key] of grammarEntries) {
-		delete grammar[key];
-	}
-	for (const [key, value] of grammarEntries) {
-		if (key === before) {
-			for (const insertKey of Object.keys(insert)) {
-				grammar[insertKey] = insert[insertKey];
-			}
-		}
-		if (!insert.hasOwnProperty(key)) {
-			grammar[key] = value;
-		}
-	}
-}
-
-// src/shared/languages/patterns.ts
-var JS_TEMPLATE_INTERPOLATION = /\$\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})+\}/;
-var JS_TEMPLATE = RegExp(
-	/`(?:\\[\s\S]|<i>|[^\\`$]|\$(?!\{))*`/.source.replace("<i>", () => JS_TEMPLATE_INTERPOLATION.source)
-);
-
-// src/shared/util.ts
-var isReadonlyArray = Array.isArray;
-function toArray(value) {
-	if (isReadonlyArray(value)) {
-		return value;
-	} else if (value == null) {
-		return [];
-	} else {
-		return [value];
-	}
-}
-
-// src/languages/prism-clike.ts
-var prism_clike_default = {
-	id: "clike",
-	grammar: {
-		comment: [
-			{
-				pattern: /(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,
-				lookbehind: true,
-				greedy: true,
-			},
-			{
-				pattern: /(^|[^\\:])\/\/.*/,
-				lookbehind: true,
-				greedy: true,
-			},
-		],
-		string: {
-			pattern: /(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,
-			greedy: true,
-		},
-		"class-name": {
-			pattern: /(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,
-			lookbehind: true,
-			inside: {
-				punctuation: /[.\\]/,
-			},
-		},
-		keyword:
-			/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,
-		boolean: /\b(?:false|true)\b/,
-		function: /\b\w+(?=\()/,
-		number: /\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,
-		operator: /[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,
-		punctuation: /[{}[\];(),.:]/,
-	},
-};
-
-// src/languages/prism-javascript.ts
 export default {
 	id: "javascript",
-	require: prism_clike_default,
+	require: clike,
 	optional: "js-templates",
 	alias: "js",
 	grammar({ extend, getOptionalLanguage }) {
@@ -129,17 +54,23 @@ export default {
 			number: {
 				pattern: RegExp(
 					/(^|[^\w$])/.source +
-						"(?:" + // constant
+						"(?:" +
+						// constant
 						(/NaN|Infinity/.source +
-							"|" + // binary integer
+							"|" +
+							// binary integer
 							/0[bB][01]+(?:_[01]+)*n?/.source +
-							"|" + // octal integer
+							"|" +
+							// octal integer
 							/0[oO][0-7]+(?:_[0-7]+)*n?/.source +
-							"|" + // hexadecimal integer
+							"|" +
+							// hexadecimal integer
 							/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source +
-							"|" + // decimal bigint
+							"|" +
+							// decimal bigint
 							/\d+(?:_\d+)*n/.source +
-							"|" + // decimal number (integer or float) but no bigint
+							"|" +
+							// decimal number (integer or float) but no bigint
 							/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/
 								.source) +
 						")" +
@@ -149,6 +80,7 @@ export default {
 			},
 			operator: /--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/,
 		});
+
 		insertBefore(javascript, "comment", {
 			"doc-comment": {
 				pattern: /\/\*\*(?!\/)[\s\S]*?(?:\*\/|$)/,
@@ -156,22 +88,26 @@ export default {
 				inside: "jsdoc",
 			},
 		});
+
 		insertBefore(javascript, "keyword", {
 			regex: {
 				pattern: RegExp(
 					// lookbehind
 					// eslint-disable-next-line regexp/no-dupe-characters-character-class
-					/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source + // Regex pattern:
+					/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source +
+						// Regex pattern:
 						// There are 2 regex patterns here. The RegExp set notation proposal added support for nested character
 						// classes if the `v` flag is present. Unfortunately, nested CCs are both context-free and incompatible
 						// with the only syntax, so we have to define 2 different regex patterns.
 						/\//.source +
 						"(?:" +
 						/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source +
-						"|" + // `v` flag syntax. This supports 3 levels of nested character classes.
+						"|" +
+						// `v` flag syntax. This supports 3 levels of nested character classes.
 						/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/
 							.source +
-						")" + // lookahead
+						")" +
+						// lookahead
 						/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source
 				),
 				lookbehind: true,
@@ -219,7 +155,9 @@ export default {
 			],
 			constant: /\b[A-Z](?:[A-Z_]|\dx?)*\b/,
 		});
+
 		const jsTemplates = getOptionalLanguage("js-templates")?.["template-string"];
+
 		insertBefore(javascript, "string", {
 			hashbang: {
 				pattern: /^#!.*/,
@@ -258,6 +196,7 @@ export default {
 				alias: "property",
 			},
 		});
+
 		insertBefore(javascript, "operator", {
 			"literal-property": {
 				pattern: /((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,
@@ -265,6 +204,7 @@ export default {
 				alias: "property",
 			},
 		});
+
 		return javascript;
 	},
 };

@@ -1,3 +1,6 @@
+import { forEach, htmlEncode, kebabToCamelCase } from "./utils";
+import { rest, tokenize } from "./utils/symbols";
+
 // src/shared/dom-util.ts
 const lang = /(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i;
 
@@ -17,37 +20,6 @@ function getLanguage(element) {
 function setLanguage(element, language) {
 	element.className = element.className.replace(RegExp(lang, "gi"), "");
 	element.classList.add("language-" + language);
-}
-
-// src/shared/symbols.ts
-const rest = Symbol.for("Prism rest");
-const tokenize = Symbol.for("Prism tokenize");
-
-// src/shared/util.ts
-function htmlEncode(text) {
-	return text
-		.replace(/&/g, "&amp;")
-		.replace(/</g, "&lt;")
-		.replace(/\u00a0/g, " ");
-}
-
-const isReadonlyArray = Array.isArray;
-
-function forEach(value, callbackFn) {
-	if (Array.isArray(value)) {
-		value.forEach(callbackFn);
-	} else if (value != null) {
-		callbackFn(value, 0);
-	}
-}
-
-function capitalize(string) {
-	return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-function kebabToCamelCase(kebab) {
-	const [first, ...others] = kebab.split(/-/);
-	return first + others.map(capitalize).join("");
 }
 
 // src/core/hook-state.ts
