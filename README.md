@@ -3,9 +3,9 @@
 Editable code areas powered by [Prism](https://prismjs.com/).    
 WIP, use at your own risk and do not assume that the API will not change.
 
--     Npm: [@victr/prism-live](https://www.npmjs.com/package/@victr/prism-live)
--     Demo: [prism-live.pages.dev](https://prism-live.pages.dev)
--     Original demo: [live.prismjs.com](https://live.prismjs.com)
+- Npm: [@victr/prism-live](https://www.npmjs.com/package/@victr/prism-live)
+- Demo: [prism-live.pages.dev](https://prism-live.pages.dev)
+- Original demo: [live.prismjs.com](https://live.prismjs.com)
 
 ## Install
 
