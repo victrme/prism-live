@@ -1,6 +1,6 @@
 {
 	"name": "@victr/prism-live",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"type": "module",
 	"description": "Editable code areas powered by Prism.",
 	"author": "Lea Verou (http://lea.verou.me)",
@@ -17,7 +17,7 @@
 	],
 	"exports": {
 		".": "./src/prism-live.js",
-		"./prism": "./src/prism/prism.js",
+		"./prism": "./src/prism/index.js",
 		"./style.css": "./src/prism-live.css",
 		"./snippets/*": "./src/snippets/*.js",
 		"./language/*": "./src/prism/languages/*.js"

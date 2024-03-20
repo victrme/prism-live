@@ -784,7 +784,7 @@ function resolve(components, reference) {
 	return void 0;
 }
 
-export { Prism, Token };
+export default Prism;
 /**
  * Prism: Lightweight, robust, elegant syntax highlighting
  *

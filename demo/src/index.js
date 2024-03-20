@@ -1,5 +1,5 @@
-import { Prism } from "../../src/prism/prism";
 import PrismLive from "../../src/prism-live";
+import Prism from "../../src/prism";
 import "../../src/prism-live.css";
 
 import languageJavascript from "../../src/prism/languages/javascript";
